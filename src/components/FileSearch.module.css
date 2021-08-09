@@ -1,0 +1,23 @@
+.searchTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: skyblue;
+
+}
+
+.searchBtn {
+  white-space: nowrap;
+}
+
+.searchTitle span {
+  width: 100%;
+  text-align: center;
+  color: #ffffff;
+}
+
+.searchInput {
+  width: 70% !important;
+  height: 100% !important;
+
+}

@@ -1,0 +1,45 @@
+.pointer {
+  cursor: pointer;
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+}
+
+.TabIcon {
+  width: 20px;
+  text-align: center;
+}
+
+.closeIcon {
+  visibility: hidden;
+}
+
+.navLi:hover .closeIcon {
+  visibility: visible;
+}
+
+:global(.active) .closeIcon {
+  visibility: visible;
+}
+
+.unsave .closeIcon {
+  visibility: hidden;
+}
+
+.unsave:hover .ciycle {
+  display: none;
+}
+
+.ciycle {
+  display: none;
+}
+
+.unsave .ciycle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+}

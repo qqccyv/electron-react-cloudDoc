@@ -51,7 +51,7 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
                 <FileMarkdownFilled style={{ fontSize: '18px' }} />
               }
               title={<span onClick={() => onFileTitleClick(item.id)} className={Styles.pointer} >{item.title}</span>}
-              description={item.body}
+            // description={item.body}
             />
           </List.Item> : <div className={[Styles.listInput].join(' ')}>
             <input value={value} onChange={(e) => setValue(e.target.value)} className={['col-7', 'form-control', Styles.searchInput].join(' ')} type="text" />

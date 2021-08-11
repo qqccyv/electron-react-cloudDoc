@@ -12,20 +12,24 @@
   text-align: center;
 }
 
+.TabIcon span {
+  margin: 0 10px;
+}
+
 .closeIcon {
-  visibility: hidden;
+  display: none;
 }
 
 .navLi:hover .closeIcon {
-  visibility: visible;
+  display: inline-block;
 }
 
 :global(.active) .closeIcon {
-  visibility: visible;
+  display: inline-block;
 }
 
 .unsave .closeIcon {
-  visibility: hidden;
+  display: none;
 }
 
 .unsave:hover .ciycle {

@@ -40,4 +40,21 @@
 
 .left-nav {
   padding: 0 !important;
+  height: 100vh;
+  position: relative;
+}
+
+.bottom-btn {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+
+.unActiveFile {
+  height: 100vh;
+  text-align: center;
+  line-height: 100px;
+  font-size: 30px;
+  color: #999999;
 }

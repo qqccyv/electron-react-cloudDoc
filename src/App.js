@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Col, Row, Button } from 'antd';
 import { PlusSquareFilled, FolderOpenFilled } from '@ant-design/icons';
 import SimpleMDE from "react-simplemde-editor";
+import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import "easymde/dist/easymde.min.css";
 import FileList from './components/FileList';
@@ -33,25 +34,60 @@ function App() {
   const [activeFileID, setActiveFileID] = useState('');
   const [openedFiledIDs, setOpenedFiledIDs] = useState([]);
   const [unsaveFileIDs, setUnsaveFileIDs] = useState([]);
-
+  const [searchList, setSearchList] = useState([])
 
   const openedFiles = openedFiledIDs.map(openedID => {
     return files.find(file => file.id === openedID)
   })
   const activeFile = files.find(file => file.id === activeFileID)
-
-
+  // 搜索文档
+  const searchListByKeyword = (keyword) => {
+    const newFiles = files.filter(item => item.title.includes(keyword))
+    setSearchList(newFiles)
+  }
+  // 点击文档列表标题
   const onFileTitleClick = (fileid) => {
     setActiveFileID(fileid);
     if (!openedFiledIDs.includes(fileid)) {
       setOpenedFiledIDs([...openedFiledIDs, fileid])
     }
   }
-
+  // 编辑文档标题
+  const onFileTilteEdit = (fileId, value) => {
+    const newFiles = files.map(item => {
+      if (item.id === fileId) {
+        item.title = value;
+        item.isNew = false;
+      }
+      return item
+    })
+    console.log(newFiles);
+    setFiles(newFiles)
+  }
+  // 删除文档
+  const onDeleteFile = (fileId) => {
+    const newFiles = files.filter(item => item.id !== fileId)
+    setFiles(newFiles)
+    onCloseTab(fileId)
+  }
+  // 创建新的文档
+  const createNewFile = () => {
+    const newId = uuidv4();
+    const newFiles = [...files, {
+      id: newId,
+      title: '',
+      body: '### 请输入相关的Markdown文档',
+      createdAt: new Date().getTime(),
+      isNew: true
+    }]
+    setFiles(newFiles)
+    onFileTitleClick(newId)
+  }
+  // 点击tab栏
   const onTabClick = (fileid) => {
     setActiveFileID(fileid);
   }
-
+  // 关闭tab栏
   const onCloseTab = (fileid) => {
     const newFiles = openedFiledIDs.filter(openid => openid !== fileid);
     setOpenedFiledIDs(newFiles)
@@ -61,7 +97,7 @@ function App() {
       setActiveFileID('')
     }
   }
-
+  // 文章内容变化
   const onChange = (value) => {
     const newFiles = files.map(file => {
       if (file.id === activeFileID) {
@@ -88,12 +124,12 @@ function App() {
       <div className="row">
         <div className="col-3 
         left-panel left-nav">
-          <FileSearch title="我的云文档" onSearch={(value) => console.log(value)}></FileSearch>
-          <FileList Files={files} onFileTitleClick={onFileTitleClick} onFileEdit={(id, value) => console.log(id, value)} onFileDelete={(id) => console.log('del', id)}></FileList>
+          <FileSearch title="我的云文档" onSearch={searchListByKeyword}></FileSearch>
+          <FileList Files={searchList.length > 0 ? searchList : files} onFileTitleClick={onFileTitleClick} onFileEdit={onFileTilteEdit} onFileDelete={onDeleteFile}></FileList>
           <Row className="bottom-btn">
             <Col span={12}>
-              <Button type="primary" block icon={<PlusSquareFilled />}>
-                编辑
+              <Button onClick={createNewFile} type="primary" block icon={<PlusSquareFilled />}>
+                新增
               </Button>
             </Col>
             <Col span={12}>

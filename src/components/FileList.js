@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { List } from 'antd';
 import {
   FileMarkdownFilled,
@@ -18,34 +18,33 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
   const closeFileEdit = () => {
     setEditFileId(null)
     setValue('')
+    const currentItem = Files.find(item => item.id === editFileId);
+    if (currentItem && currentItem.isNew) {
+      onFileDelete(currentItem.id)
+    }
   }
   useEffect(() => {
-    // const keyBoardEventHandle = (e) => {
-    //   const { code } = e;
-    //   if ((code === 'Enter' || code === 'NumpadEnter') && editFileId) {
-    //     onFileEdit(editFileId, value)
-    //     closeFileEdit(e)
-    //   } else if (code === 'Escape' && editFileId) {
-    //     closeFileEdit(e)
-    //   }
-    // }
-    // document.addEventListener('keyup', keyBoardEventHandle)
-    // return () => {
-    //   document.removeEventListener('keyup', keyBoardEventHandle)
-    // }
-    if (enterPressed && editFileId) {
+    if (enterPressed && editFileId && value.trim() !== '') {
       onFileEdit(editFileId, value)
       closeFileEdit()
     } else if (escPressed && editFileId) {
       closeFileEdit()
     }
   })
+  useEffect(() => {
+    const newFile = Files.find(item => item.isNew)
+    if (newFile) {
+      setEditFileId(newFile.id)
+      setValue(newFile.title)
+    }
+  }, [Files])
+
   return (
     <>
       <List
         dataSource={Files}
         renderItem={item => (
-          (item.id !== editFileId) ? <List.Item key={item.id} actions={[<EditFilled onClick={() => { setEditFileId(item.id); setValue(item.title) }} className={Styles.pointer} />, <DeleteFilled onClick={() => onFileDelete(item.id)} className={Styles.pointer} />]}>
+          (item.id !== editFileId && !item.isNew) ? <List.Item key={item.id} actions={[<EditFilled onClick={() => { setEditFileId(item.id); setValue(item.title) }} className={Styles.pointer} />, <DeleteFilled onClick={() => onFileDelete(item.id)} className={Styles.pointer} />]}>
             <List.Item.Meta
               avatar={
                 <FileMarkdownFilled style={{ fontSize: '18px' }} />
@@ -54,7 +53,7 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
             // description={item.body}
             />
           </List.Item> : <div className={[Styles.listInput].join(' ')}>
-            <input value={value} onChange={(e) => setValue(e.target.value)} className={['col-7', 'form-control', Styles.searchInput].join(' ')} type="text" />
+            <input placeholder="请输入新增文档名字" value={value} onChange={(e) => setValue(e.target.value)} className={['col-7', 'form-control', Styles.searchInput].join(' ')} type="text" />
             <button onClick={closeFileEdit} className={['btn', 'btn-primary', Styles.listBtn].join(' ')}>关闭</button>
           </div>
         )}

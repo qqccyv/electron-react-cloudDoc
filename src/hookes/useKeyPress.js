@@ -22,7 +22,7 @@ const useKeyPress = (targetKey) => {
       document.removeEventListener('keyup', keyUpHandler)
       document.removeEventListener('keydown', keyDownPressed)
     }
-  }, [targetKey])
+  }, [])
 
   return KeyPressed
 }

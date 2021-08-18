@@ -24,6 +24,7 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
     }
   }
   useEffect(() => {
+    console.log(enterPressed, escPressed);
     if (enterPressed && editFileId && value.trim() !== '') {
       onFileEdit(editFileId, value)
       closeFileEdit()
@@ -44,7 +45,10 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
       <List
         dataSource={Files}
         renderItem={item => (
-          (item.id !== editFileId && !item.isNew) ? <List.Item key={item.id} actions={[<EditFilled onClick={() => { setEditFileId(item.id); setValue(item.title) }} className={Styles.pointer} />, <DeleteFilled onClick={() => onFileDelete(item.id)} className={Styles.pointer} />]}>
+          (item.id === editFileId || item.isNew) ? <div className={[Styles.listInput].join(' ')}>
+            <input placeholder="请输入新增文档名字" value={value} onChange={(e) => setValue(e.target.value)} className={['col-7', 'form-control', Styles.searchInput].join(' ')} type="text" />
+            <button onClick={closeFileEdit} className={['btn', 'btn-primary', Styles.listBtn].join(' ')}>关闭</button>
+          </div> : <List.Item key={item.id} actions={[<EditFilled onClick={() => { setEditFileId(item.id); setValue(item.title) }} className={Styles.pointer} />, <DeleteFilled onClick={() => onFileDelete(item.id)} className={Styles.pointer} />]}>
             <List.Item.Meta
               avatar={
                 <FileMarkdownFilled style={{ fontSize: '18px' }} />
@@ -52,10 +56,7 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
               title={<span onClick={() => onFileTitleClick(item.id)} className={Styles.pointer} >{item.title}</span>}
             // description={item.body}
             />
-          </List.Item> : <div className={[Styles.listInput].join(' ')}>
-            <input placeholder="请输入新增文档名字" value={value} onChange={(e) => setValue(e.target.value)} className={['col-7', 'form-control', Styles.searchInput].join(' ')} type="text" />
-            <button onClick={closeFileEdit} className={['btn', 'btn-primary', Styles.listBtn].join(' ')}>关闭</button>
-          </div>
+          </List.Item>
         )}
       >
 

@@ -23,12 +23,7 @@ const FileSearch = ({ title, onSearch }) => {
     }
 
   })
-  useEffect(() => {
-    if (searchActive) {
-      searchInput.current.focus()
-    }
 
-  }, [searchActive])
   return (
     <>
       {

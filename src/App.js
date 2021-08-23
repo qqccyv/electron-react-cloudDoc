@@ -9,6 +9,8 @@ import "easymde/dist/easymde.min.css";
 import FileList from './components/FileList';
 import FileSearch from './components/FileSearch';
 import TabList from './components/TabList';
+const fs = window.require('fs');
+console.dir(fs)
 
 const defaultFiles = [
   {

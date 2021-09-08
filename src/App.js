@@ -4,14 +4,17 @@ import { PlusSquareFilled, FolderOpenFilled } from '@ant-design/icons';
 import SimpleMDE from "react-simplemde-editor";
 import { v4 as uuidv4 } from 'uuid';
 import { flattenArr, objToArr } from './utils/helper'
+import Store from 'electron-store';
 import './App.css';
 import "easymde/dist/easymde.min.css";
 import FileList from './components/FileList';
 import FileSearch from './components/FileSearch';
 import TabList from './components/TabList';
-const fs = window.require('fs');
-console.dir(fs)
-
+const path = require('path');
+const fileHelper = require('./utils/fileHelper');
+const { app } = require('electron').remote;
+const store = new Store();
+store.set('name', '邓宇')
 const defaultFiles = [
   {
     id: 1,
@@ -39,7 +42,11 @@ function App() {
   const [unsaveFileIDs, setUnsaveFileIDs] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const filesArr = objToArr(files);
-
+  const openedFiles = openedFiledIDs.map(openedID => {
+    return files[openedID]
+  });
+  const activeFile = files[activeFileID];
+  const saveLocation = app.getPath('documents');
   // 搜索文档
   const searchListByKeyword = (keyword) => {
     if (keyword.trim() !== '') {
@@ -58,13 +65,19 @@ function App() {
     }
   }
   // 编辑文档标题
-  const onFileTilteEdit = (fileId, value) => {
+  const onFileTilteEdit = (fileId, value, isNew) => {
     const newFiles = {
       ...files[fileId], title: value, isNew: false
     }
-    console.log(newFiles);
-    setFiles({ ...files, [fileId]: newFiles })
-    console.log(files[fileId]);
+    if (isNew) {
+      fileHelper.writeFile(path.join(saveLocation, `${newFiles.title}.md`), newFiles.body).then(() => {
+        setFiles({ ...files, [fileId]: newFiles })
+      })
+    } else {
+      fileHelper.reName(path.join(saveLocation, `${files[fileId].title}.md`), path.join(saveLocation, `${value}.md`)).then(() => {
+        setFiles({ ...files, [fileId]: newFiles })
+      })
+    }
   }
   // 删除文档
   const onDeleteFile = (fileId) => {
@@ -74,7 +87,6 @@ function App() {
   }
   // 创建新的文档
   const createNewFile = () => {
-    console.log(22222222222);
     const newId = uuidv4();
     const newFiles = {
       ...files,
@@ -122,10 +134,13 @@ function App() {
     }
   }, []);
 
-  const openedFiles = openedFiledIDs.map(openedID => {
-    return files[openedID]
-  })
-  const activeFile = files[activeFileID]
+  // 保存当前文件
+  const saveCurrentFile = () => {
+    fileHelper.writeFile(path.join(saveLocation, `${activeFile.title}.md`), activeFile.body).then(() => {
+      setUnsaveFileIDs(unsaveFileIDs.filter(fileId => fileId !== activeFile.id))
+    })
+  }
+
   return (
     <div className="App container-fluid">
       <div className="row">
@@ -160,6 +175,9 @@ function App() {
                   value={activeFile && activeFile.body} onChange={onChange} options={autofocusNoSpellcheckerOptions}>
 
                 </SimpleMDE>
+                <Button onClick={saveCurrentFile} block icon={<FolderOpenFilled />}>
+                  保存
+                </Button>
               </>
             )
           }

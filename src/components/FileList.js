@@ -15,21 +15,21 @@ const FileList = ({ Files, onFileTitleClick, onFileEdit, onFileDelete }) => {
   const [value, setValue] = useState('');
   const enterPressed = useKeyPress(['Enter', 'NumpadEnter']);
   const escPressed = useKeyPress(['Escape']);
-  const closeFileEdit = () => {
+  const closeFileEdit = (currentItem) => {
     setEditFileId(null)
     setValue('')
-    const currentItem = Files.find(item => item.id === editFileId);
     if (currentItem && currentItem.isNew) {
       onFileDelete(currentItem.id)
     }
   }
   useEffect(() => {
-    console.log(enterPressed, escPressed);
+    const currentItem = Files.find(item => item.id === editFileId);
+
     if (enterPressed && editFileId && value.trim() !== '') {
-      onFileEdit(editFileId, value)
-      closeFileEdit()
+      onFileEdit(editFileId, value, currentItem.isNew)
+      closeFileEdit(currentItem)
     } else if (escPressed && editFileId) {
-      closeFileEdit()
+      closeFileEdit(currentItem)
     }
   })
   useEffect(() => {

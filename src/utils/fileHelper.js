@@ -1,5 +1,5 @@
-const fs = require('fs').promises;
-const path = require('path');
+const fs = window.require('fs').promises;
+// const path = window.require('path');
 
 const fileHelper = {
   readFile: (path) => {
@@ -16,9 +16,9 @@ const fileHelper = {
   }
 }
 
-const readPath = path.join(__dirname, 'helper.js')
-const writepath = path.join(__dirname, 'helper.md')
-const newPath = path.join(__dirname, 'rename.md')
+// const readPath = path.join(__dirname, 'helper.js')
+// const writepath = path.join(__dirname, 'helper.md')
+// const newPath = path.join(__dirname, 'rename.md')
 // fileHelper.readFile(readPath, (data) => {
 //   console.log(data);
 // })
@@ -39,3 +39,5 @@ const newPath = path.join(__dirname, 'rename.md')
 //   console.log(res);
 //   console.log(`${newPath}文件删除成功`);
 // })
+
+module.exports = fileHelper
